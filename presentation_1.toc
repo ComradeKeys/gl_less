@@ -1,6 +1,0 @@
-\beamer@endinputifotherversion {3.33pt}
-\beamer@sectionintoc {1}{What is OpenGL?}{2}{0}{1}
-\beamer@subsectionintoc {1}{1}{What am I going to need?}{2}{0}{1}
-\beamer@subsectionintoc {1}{2}{Libraries used}{3}{0}{1}
-\beamer@sectionintoc {2}{Hello world Triangle}{4}{0}{2}
-\beamer@subsectionintoc {2}{1}{Setting up the compiler}{4}{0}{2}
