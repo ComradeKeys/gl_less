@@ -26,5 +26,5 @@ Normally the .pdf files are simply downloaded from the repository. However if
 you would like to add your own modifications to my work feel free to do so that
 adheres to the terms of the license. The .tex files can simply be compiled with
 pdflatex with the following syntax:
-$ pdflatex file.tex
+$ pdflatex <file_name>.tex
 --------------------------------------------------------------------------------
