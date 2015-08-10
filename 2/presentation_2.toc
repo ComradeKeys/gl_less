@@ -1,8 +1,0 @@
-\beamer@endinputifotherversion {3.33pt}
-\beamer@sectionintoc {1}{Matrices}{2}{0}{1}
-\beamer@subsectionintoc {1}{1}{Push and Pop}{3}{0}{1}
-\beamer@sectionintoc {2}{Transform in OpenGL}{4}{0}{2}
-\beamer@subsectionintoc {2}{1}{glRotate}{4}{0}{2}
-\beamer@subsectionintoc {2}{2}{glScale}{5}{0}{2}
-\beamer@subsectionintoc {2}{3}{glScale}{6}{0}{2}
-\beamer@sectionintoc {3}{Second Section}{7}{0}{3}

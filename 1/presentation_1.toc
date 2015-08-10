@@ -1,8 +1,0 @@
-\beamer@endinputifotherversion {3.33pt}
-\beamer@sectionintoc {1}{What is OpenGL?}{2}{0}{1}
-\beamer@subsectionintoc {1}{1}{History of OpenGL}{3}{0}{1}
-\beamer@sectionintoc {2}{Setting it up}{4}{0}{2}
-\beamer@subsectionintoc {2}{1}{What am I going to need?}{4}{0}{2}
-\beamer@subsectionintoc {2}{2}{Setting up the compiler}{5}{0}{2}
-\beamer@subsectionintoc {2}{3}{Code}{6}{0}{2}
-\beamer@subsectionintoc {2}{4}{Other shapes we can draw}{7}{0}{2}
