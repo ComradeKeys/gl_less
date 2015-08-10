@@ -78,17 +78,18 @@
 
 \usepackage{graphicx} % Allows including images
 \usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
+\usepackage{multirow}
 
 %----------------------------------------------------------------------------------------
 %	TITLE PAGE
 %----------------------------------------------------------------------------------------
 
-\title[Short title]{Full Title of the Talk} % The short title appears at the bottom of every slide, the full title is only on the title page
+\title[Hello Triangle]{Intro to Opengl} % The short title appears at the bottom of every slide, the full title is only on the title page
 
 \author{Dane Christensen, Brigham H. Keys, Esq.} % Your name
-\institute[BYU-Idaho] % Your institution as it will appear on the bottom of every slide, may be shorthand to save space
+\institute[BYU-I] % Your institution as it will appear on the bottom of every slide, may be shorthand to save space
 {
-Brigham Young University - Idaho
+BYU-Idaho \\ % Your institution for the title page
 \medskip
 \textit{key13005@byui.edu} % Your email address
 }
@@ -98,121 +99,97 @@ Brigham Young University - Idaho
 
 \begin{frame}
 \titlepage % Print the title page as the first slide
-            \includegraphics[scale=.1]{logo.png}
 \end{frame}
+
+%\begin{frame}
+%\frametitle{Table of Contents} % Table of contents slide, comment this block out to remove it
+%\tableofcontents % Throughout your presentation, if you choose to use \section{} and \subsection{} commands, these will automatically be printed on this slide as an overview of your presentation
+%\end{frame}
 
 %----------------------------------------------------------------------------------------
 %	PRESENTATION SLIDES
 %----------------------------------------------------------------------------------------
 
 %------------------------------------------------
-\section{First Section} % Sections can be created in order to organize your presentation into discrete blocks, all sections and subsections are automatically printed in the table of contents as an overview of the talk
+\section{What is OpenGL?} % Sections can be created in order to organize your presentation into discrete blocks, all sections and subsections are automatically printed in the table of contents as an overview of the talk
 %------------------------------------------------
 
-\subsection{Subsection Example} % A subsection can be created just before a set of slides with a common theme to further break down your presentation into chunks
+\subsection{What am I going to need?} % A subsection can be created just before a set of slides with a common theme to further break down your presentation into chunks
 
 \begin{frame}
-\frametitle{Paragraphs of Text}
-text.\\
-
+\frametitle{What is OpenGL?}
+OpenGL is the industry's foundation for high performance graphics, from games to virtual reality, mobile phones, and supercomputers. It is a cross-language, cross-platform application programming interface for rendering 2D and 3D vector graphics. The API is typically used to interact with a graphics processing unit (GPU), to achieve hardware-accelerated rendering. It does not handle windows, keyboard, mouse or any other kind of input from the user. However there are other APIs that work next to OpenGL to accomplish these tasks.%Needs a citation to wikipedia, opengl.org
 \end{frame}
 
 %------------------------------------------------
 
-\begin{frame}
-\frametitle{Slide 2}
-text.
-
-\end{frame}
-
+%\begin{frame}
+%\frametitle{History of OpenGl}
+%\begin{itemize}
+%\item
+%\end{itemize}
+%\end{frame}
+\subsection{Libraries used}
 %------------------------------------------------
 
 \begin{frame}
-\frametitle{Blocks of Highlighted Text}
-\begin{block}{Block 1}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer lectus nisl, ultricies in feugiat rutrum, porttitor sit amet augue. Aliquam ut tortor mauris. Sed volutpat ante purus, quis accumsan dolor.
+\frametitle{Libraries used in this course}
+\begin{block}{OpenGL}
+Chances are you already have the OpenGL installed as it is often bundled with your graphics card driver. However you likely are going to need to install the development files.
 \end{block}
 
-\begin{block}{Block 2}
-Pellentesque sed tellus purus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Vestibulum quis magna at risus dictum tempor eu vitae velit.
+\begin{block}{The OpenGL Utility Library (GLU)}
+Is a collection of functions that do drawing on a higher level, and has functions that generally make our lives easier. It is bundled with OpenGL and uses OpenGL directly.
 \end{block}
 
-\begin{block}{Block 3}
-Suspendisse tincidunt sagittis gravida. Curabitur condimentum, enim sed venenatis rutrum, ipsum neque consectetur orci, sed blandit justo nisi ac lacus.
+\begin{block}{FreeGlut}
+Another collection of functions that have high level drawing. But it's main purpose for us is to handle the keyboard, mouse and window handling. This will likely need to be installed.
 \end{block}
 \end{frame}
 
 %------------------------------------------------
-
-\begin{frame}
-\frametitle{Multiple Columns}
-\begin{columns}[c] % The "c" option specifies centered vertical alignment while the "t" option is used for top vertical alignment
-
-\column{.45\textwidth} % Left column and width
-\textbf{Heading}
-\begin{enumerate}
-\item Statement
-\item Explanation
-\item Example
-\end{enumerate}
-
-\column{.5\textwidth} % Right column and width
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer lectus nisl, ultricies in feugiat rutrum, porttitor sit amet augue. Aliquam ut tortor mauris. Sed volutpat ante purus, quis accumsan dolor.
-
-\end{columns}
-\end{frame}
-
-%------------------------------------------------
-\section{Second Section}
+\section{Hello world Triangle}
+\subsection{Setting up the compiler}
 %------------------------------------------------
 
 \begin{frame}
-\frametitle{Table}
+\frametitle{Setting up the compiler}
+To compile code containing OpenGL functions, we need to let the compiler know that we are calling them in the first place by linking the libraries to our binary. Below are the individual flags we need to give to the compiler to use these utilities. Here is the syntax to compile the code from the command line:
 \begin{table}
-\begin{tabular}{l l l}
-\toprule
-\textbf{Treatments} & \textbf{Response 1} & \textbf{Response 2}\\
-\midrule
-Treatment 1 & 0.0003262 & 0.562 \\
-Treatment 2 & 0.0015681 & 0.910 \\
-Treatment 3 & 0.0009271 & 0.296 \\
-\bottomrule
+\begin{tabular}{l l l l l}
+  \toprule
+  \textbf{Compiler} & \textbf{File} & \textbf{OpenGL} & \textbf{GLU} & \textbf{FreeGlut}\\
+  \midrule
+  g++ & main.cpp & -lGL & -lGLU & -lglut \\
+  \bottomrule
 \end{tabular}
-\caption{Table caption}
 \end{table}
 \end{frame}
 
 %------------------------------------------------
-
 \begin{frame}
-\frametitle{Theorem}
-\begin{theorem}[Mass--energy equivalence]
-$E = mc^2$
-\end{theorem}
-\end{frame}
+  \frametitle{Initialize OpenGL}
 
-%------------------------------------------------
-
-\begin{frame}[fragile] % Need to use the fragile option when verbatim is used in the slide
-\frametitle{Verbatim}
-\begin{example}[Theorem Slide Code]
-\begin{verbatim}
-\begin{frame}
-\frametitle{Theorem}
-\begin{theorem}[Mass--energy equivalence]
-$E = mc^2$
-\end{theorem}
-\end{frame}\end{verbatim}
-\end{example}
+    \begin{table}[H]
+      \centering
+      \begin{tabular}{ll}
+        \multirow{3}{*}{\includegraphics[scale=.33]{code.png}} & Including the header files giving us functionality. The OpenGL header is omitted because it is included by freeglut.h however feel free to \#include \textless GL/gl.h\textgreater. The area concerning windows.h is only for users compiling the program with windows, windows.h is needed before \#include'ing freeglut.h. \\[18ex]
+        & Initializing FreeGlut, giving the window a title, window dimensions, etc.\\[10ex]
+        & The actual drawing of our triangle
+        & in 2D space, and putting it to our screen.
+      \end{tabular}
+    \end{table}
+      
 \end{frame}
 
 %------------------------------------------------
 
 \begin{frame}
-\frametitle{Figure}
-Uncomment the code on this slide to include your own image from the same directory as the template .TeX file.
-%\begin{figure}
-%\includegraphics[width=0.8\linewidth]{test}
+  \frametitle{Figure}
+
+
+
+%  \begin{figure}
 %\end{figure}
 \end{frame}
 
