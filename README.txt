@@ -11,8 +11,8 @@ user to discover and apply to their toolbox of skills.
 
 gl_less table of contents
 --------------------------------------------------------------------------------
-1. Hello Triangle
-2. Translations in OpenGL
+1. Hello Triangle & Setting up SDL2 w/OpenGL
+2. Transformations, Rotations, and Scaling in OpenGL
 3. Colors and Textures (sample platformer)
 4. Intro to 3D, Lighting and Normalized Vectors (textured obj loader with samples)
 5. Intro to GLSL
@@ -20,7 +20,7 @@ gl_less table of contents
 7. Texturing a sphere
 8. OpenGL ES/Android development with OpenGL (2D platformer demo)
 9. Non-OpenGL graphical engines and effects (RayCasting, RayTracing, and "Mode 7" graphics)
-10.WebGL
+10. WebGL
 --------------------------------------------------------------------------------
 
 INSTALLATION
