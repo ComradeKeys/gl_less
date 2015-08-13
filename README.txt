@@ -12,8 +12,8 @@ user to discover and apply to their toolbox of skills.
 gl_less table of contents
 --------------------------------------------------------------------------------
 1. Hello Triangle & Setting up SDL2 w/OpenGL
-2. Transformations, Rotations, and Scaling in OpenGL
-3. Colors and Textures (sample platformer)
+2. Colors and Textures (sample platformer)
+3. Matrices, GL Transformations
 4. Intro to 3D, Lighting and Normalized Vectors (textured obj loader with samples)
 5. Intro to GLSL
 6. GLSL Part two
