@@ -1,0 +1,73 @@
+#include <fstream>
+#include <vector>
+#include <iostream>
+#include <string>
+#include <stdio.h>
+#include <stdlib.h>
+
+using namespace std;
+
+#define LEVEL_HEIGHT 8
+
+void fillLevel(vector<string> &data, int arr[][LEVEL_HEIGHT], int dimWidth, int dimHeight = LEVEL_HEIGHT) {
+  bool parsedLastChar = false;
+  const char * line;
+  for(int i = 0; i < dimHeight; i++) { // for each horizontal row
+    line = (data[i]).c_str();
+    if(line == NULL)
+      return;
+    for(int j = 0; j < dimWidth; j++) { // parse each character of said row and build our level
+      if(parsedLastChar) {
+	arr[j][i] = 5;
+      }
+      else {
+	switch (line[j]) {	
+	case '\0':
+	  arr[j][i] = 5; // Sky Texture
+	  parsedLastChar = true;
+	  break;
+	case 'x':
+	  arr[j][i] = 4; // Block texture
+	  break;
+	case 'e':
+	  arr[j][i] = 0; // Special Block texture
+	  break;
+	default:
+	  arr[j][i] = 5; // Sky texture
+	  break;
+	}   
+      }
+    } 
+    parsedLastChar = false;
+  }	
+}
+ 
+void displayLevel(int arr[][LEVEL_HEIGHT], int dimWidth, int dimHeight = LEVEL_HEIGHT) {
+  for(int i = 0; i < dimHeight; i++) {
+    for(int j = 0; j < dimWidth; j++) {
+      cout << arr[j][i];
+    }
+    cout << endl;
+  }
+}
+
+int main(int argc, char **argv) {
+  fstream fin;
+  fin.open("world.txt");
+
+  vector<string> x;
+  string temp;
+  int longestLine = 0;
+  while(getline(fin, temp)) {
+    x.push_back(temp);
+    if(temp.length() > longestLine)
+      longestLine = temp.length();
+  }
+   
+  int world[longestLine][8];
+  fillLevel(x, world, longestLine);
+  displayLevel(world, longestLine);  
+
+  fin.close();
+  return 1;
+}

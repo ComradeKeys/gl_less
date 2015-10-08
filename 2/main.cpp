@@ -1,0 +1,306 @@
+// 3rd Party API headers
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+#include "GL/glu.h"
+// Regular headers
+#include <fstream>
+#include <vector>
+#include <iostream>
+#include <string>
+#include <stdio.h>
+#include <stdlib.h>
+
+using namespace std;
+
+#define LEVEL_HEIGHT 15
+int LEVEL_WIDTH;
+GLuint spriteSheet;
+
+// Player Data
+float playerX = -0.8;
+float playerY = -0.73;
+bool goingLeft = false;
+bool goingRight = false;
+bool jumping = false;
+float momentumX = 0.0;
+float momentumY = 0.0;
+
+// A youtube tutorialist's PNG loader as used anew here (lacking citation)
+GLuint loadTexture(const string & fileName) {
+  SDL_Surface *image = IMG_Load(fileName.c_str()); // The 'SDL_Surface' holds the neccesary 'W', 'H', and 'PIXEL' data
+  //  SDL_DisplayFormatAlpha(image); //Copies the surface over to a new surface with an 'alpha' (transparency) channel
+  
+  // glGenTextures is similar to (int argc, char **argv), where one part is the number of  items and the
+  // other is the array pointer to that collection. Except here we are making and not handling that collection
+  unsigned object(0); // An unsigned int initialized to '0' (with no texture data)
+  glGenTextures(1, &object); // Prep our unsigned int 'object' for '1' texture. 
+  // This if for EITHER using OR creating a texture we want to use. In this case we are creating one
+  glBindTexture(GL_TEXTURE_2D, object); // Set our unsigned int object to be THE TARGET '2D' texture. 
+
+  // Setting properties (or flags) as a part of 'texturing' our image
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // For the "2D texture" we assign "MIN_FILTER" to be "LINEAR"
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); // Same thing but for the "MAG_FILTER"
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); // For the TEXTURE WRAP_S, we make it's properties CLAMP..
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); // For the TEXTURE_WRAP_T, we make it's CLAMP too
+  
+  // Smoosh the data from our surface with the properties set above and the parameters specified 
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image->w, image->h,
+	       0, GL_RGBA, GL_UNSIGNED_BYTE, image->pixels);
+  //Free surface                                                                                                                 
+  SDL_FreeSurface(image);
+  return object;
+}
+
+float WIDTH_DIMENSION  = 4.0;
+float HEIGHT_DIMENSION = 4.0;
+float SPRITE_DIMENSION = 64.0; // in the spritesheet
+float SPRITE_DIMX = (32.0/640.0) *2;
+float SPRITE_DIMY = (32.0/480.0) *2;
+float PIXEL_W = WIDTH_DIMENSION  * SPRITE_DIMENSION; 
+float PIXEL_H = HEIGHT_DIMENSION * SPRITE_DIMENSION;
+
+void drawSprite(float x, float y, int index) {
+  if((index >= WIDTH_DIMENSION * HEIGHT_DIMENSION) || (index < 0))
+    return;
+
+  float row = (index % (int)WIDTH_DIMENSION); 
+  float col = (index / (int)WIDTH_DIMENSION);
+
+  glEnable(GL_TEXTURE_2D);
+  glBindTexture(GL_TEXTURE_2D, spriteSheet);
+  glBegin(GL_QUADS);
+    glTexCoord2d(      row * SPRITE_DIMENSION / PIXEL_W,     col * SPRITE_DIMENSION / PIXEL_H);  //1st Corner
+    glVertex2f(x, y + SPRITE_DIMY);
+    glTexCoord2d((row+1.0) * SPRITE_DIMENSION / PIXEL_W,     col * SPRITE_DIMENSION / PIXEL_H);  //2nd Corner
+    glVertex2f(x + SPRITE_DIMX, y + SPRITE_DIMY);
+    glTexCoord2d((row+1.0) * SPRITE_DIMENSION / PIXEL_W, (col+1.0)*SPRITE_DIMENSION / PIXEL_H);  //3rd Corner
+    glVertex2f(x + SPRITE_DIMX, y);    
+    glTexCoord2d(      row * SPRITE_DIMENSION / PIXEL_W, (col+1.0)*SPRITE_DIMENSION / PIXEL_H);  //4th Corner
+    glVertex2f(x, y);
+  glEnd();
+}
+
+// Replace our char data with integer texture mapping data
+void fillLevel(vector<string> &data, int arr[][LEVEL_HEIGHT], int dimWidth, int dimHeight = LEVEL_HEIGHT) {
+  bool parsedLastChar = false;
+  const char * line;
+  for(int i = 0; i < dimHeight; i++) { // for each horizontal row
+    line = (data[i]).c_str();
+    if(line == NULL)
+      return;
+    for(int j = 0; j < dimWidth; j++) { // parse each character of said row and build our level
+      if(parsedLastChar) {
+	arr[j][i] = 5;
+      }
+      else {
+	switch (line[j]) {	
+	case '\0':
+	  arr[j][i] = 5; // Sky Texture
+	  parsedLastChar = true;
+	  break;
+	case 'x':
+	  arr[j][i] = 4; // Block texture
+	  break;
+	case 'e':
+	  arr[j][i] = 0; // Special Block texture
+	  break;
+	default:
+	  arr[j][i] = 5; // Sky texture
+	  break;
+	}   
+      }
+    } 
+    parsedLastChar = false;
+  }	
+}
+
+// Helps us define the dimensions of our level representing array
+int getLevelWidth(string filename = "world.txt") {
+  fstream fin;
+  fin.open("world.txt");
+  string temp;
+  int longestLine = 0;
+  while(getline(fin, temp)) {
+    if(temp.length() > longestLine)
+      longestLine = temp.length();
+  }
+  fin.close();
+  return longestLine;
+}
+
+// Converts the text file we are loading to 2d texturing data
+void loadLevel(int world[][LEVEL_HEIGHT]) {
+  fstream fin;
+  fin.open("world.txt");
+  
+  vector<string> x;
+  string temp;
+  int longestLine = 0;
+  while(getline(fin, temp)) {
+    x.push_back(temp);
+    if(temp.length() > longestLine)
+      longestLine = temp.length();
+  }
+   
+  fillLevel(x, world, longestLine);
+  fin.close();
+}
+
+void draw(int level[][LEVEL_HEIGHT]) {
+  glClearColor(0,0,0,1);
+  glClear(GL_COLOR_BUFFER_BIT);
+  for(int i = 0; i < LEVEL_HEIGHT; i++) {
+    for(int j = 0; j < LEVEL_WIDTH; j++) {
+	drawSprite((j*SPRITE_DIMX)-1.0, 1.0-(i*SPRITE_DIMY)-SPRITE_DIMY, level[j][i]);
+    }
+  } 
+  drawSprite(playerX, playerY, 6);
+}
+
+void checkInput() {
+  SDL_Event e;
+  while(SDL_PollEvent(&e) != 0) {
+    if(e.type == SDL_QUIT)
+     exit(0);
+    if(e.type == SDL_KEYDOWN) {
+      switch(e.key.keysym.sym) {
+      case 'w':
+	jumping = true;
+	break;
+      case 'a':
+	goingLeft = true;
+	break;
+      case 'd':
+	goingRight = true;
+	break;
+      }
+    }
+    if(e.type == SDL_KEYUP) {
+      switch(e.key.keysym.sym) {
+      case 'w':
+	jumping = false;
+	break;
+      case 'a':
+	goingLeft = false;
+	break;
+      case 'd':
+	goingRight = false;
+      }
+    }
+  }
+}
+
+bool collideVertical(float px, float py, int x, int y){
+  float pxStretch = px + SPRITE_DIMX;
+  float pyStretch = py + SPRITE_DIMY;
+  float xStretch = x + SPRITE_DIMX;
+  float yStretch = y + SPRITE_DIMY;
+  
+  if(((pxStretch > x) && (pxStretch < xStretch) || (px > x) && (px < xStretch)) 
+     &&
+     ((pyStretch > y) && (pyStretch < yStretch) || (py > y) && (py < yStretch)))
+    return true;
+  else
+    return false;
+}
+
+bool collideHorizontal(float px, float py, int x, int y){
+  float pxStretch = px + SPRITE_DIMX;
+  float pyStretch = py + SPRITE_DIMY;
+  float xStretch = x + SPRITE_DIMX;
+  float yStretch = y + SPRITE_DIMY;
+  
+  if(((pxStretch > x) && (pxStretch < xStretch) || (px > x) && (px < xStretch)) 
+     &&
+     ((pyStretch > y) && (pyStretch < yStretch) || (py > y) && (py < yStretch))) {
+    if(px < x)
+      return true;
+  }
+  return false;
+}
+
+
+void advance(int level[][LEVEL_HEIGHT]) {
+  if((jumping) && (momentumY == 0)) {
+    momentumY += 0.011;
+  }
+  if(goingLeft && goingRight)
+    momentumX = 0.00;
+  else if(goingLeft) 
+    momentumX = -0.001;
+  else if(goingRight)
+    momentumX = 0.001;
+  else
+    momentumX = 0.00;
+
+  if(momentumY > -0.6)
+    momentumY -= 0.0001;
+
+  /*
+  float nextX = playerX + momentumX;
+  float nextY = playerY + momentumY;
+  
+  for(int i = 0; i < LEVEL_HEIGHT; i++) {
+    for(int j = 0; j < LEVEL_WIDTH; j++) {
+      if(level[j][i] != 5) // Checking for non-sky coordinates
+	{
+	  printf("nextX: %f nextY: %f px: %f py: %f\n", nextX, nextY,  (j*SPRITE_DIMX - SPRITE_DIMX), (i*SPRITE_DIMY - SPRITE_DIMY));
+	  if(collideVertical(nextX, nextY, (j*SPRITE_DIMX - SPRITE_DIMX), (i*SPRITE_DIMY - SPRITE_DIMY))) {
+	    momentumX = 0;
+	  }
+	  if(collideHorizontal(nextX, nextY, (j*SPRITE_DIMX -SPRITE_DIMX), (i*SPRITE_DIMY - SPRITE_DIMY))) 
+	    momentumY = 0;
+	}
+    }
+    } */
+
+  // Hard coded value (temporary)
+  if((playerY + momentumY )< -0.73) {
+    momentumY = 0;
+  }
+  
+  playerX += momentumX;
+  playerY += momentumY;
+}
+
+
+int main() {
+  // Initialize OpenGL
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  glViewport(0,0,1,1);
+  glClearColor(0,0,0,1);
+
+  // Setup SDL
+  SDL_Init(SDL_INIT_VIDEO);
+  SDL_Window *win = SDL_CreateWindow("Board the Platforms!", 100, 100, 640, 480, SDL_WINDOW_SHOWN);
+  SDL_Renderer *ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
+  SDL_GLContext gl = SDL_GL_CreateContext(win);
+
+  // Load our spritesheet of textures
+  spriteSheet = loadTexture("sprites.png");
+  
+  // Get our level ready for drawing
+  LEVEL_WIDTH = getLevelWidth();
+  int level[LEVEL_WIDTH][LEVEL_HEIGHT];
+  loadLevel(level);
+
+  // Player data
+  bool isPlaying = true;
+  SDL_Event e;
+
+  while(isPlaying) {
+    checkInput();
+    advance(level);
+    draw(level);
+    SDL_GL_SwapWindow(win);
+  }
+ 
+  // Tidy up everything
+  SDL_GL_DeleteContext(gl);
+  SDL_DestroyWindow(win);
+
+  return 0;
+}

@@ -1,0 +1,2 @@
+to compile use:
+   g++ main.cpp -lSDL2
