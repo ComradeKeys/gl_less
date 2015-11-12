@@ -116,13 +116,15 @@
 % -------------BEGIN SLIDE------------------------
 \begin{frame}
 
-  \frametitle{A little about shaders}
+  \frametitle{What are shaders?}
 
   \begin{itemize}
   \item There are multiple shading langauges, such as HLSL, GLSL, and Kronos is releasing SPIR-V later this year.
   \item Just like anything you write in C++, shaders have source code, files, and are compiled.
   \item GLSL's syntax is very similar to the C programming language, so hopefully the learning curve will be minimal.
   \item Shaders are stored in IDs, which are ints.
+  \item In this slide show we present how to compile a shader in it's own seperate source file, as it's own seperate program.
+  \item Shaders reside entirely in the GPU when they are ran
   \end{itemize}
 
 \end{frame}
@@ -135,17 +137,11 @@
   There are two different kinds of shaders that together create a shader program, both are required for the shader to work.\\
   Chances are you are not going to need to write your own shader, as there are plenty of well written shaders online.\\
   \begin{block}{Vertex Shaders}
-    \begin{itemize}
-    \item Changes the position of a vertex (Very similar to a GL translation)
-    \item Capable of changing the color of a vertex
-    \end{itemize}
+    States the position of a vertex (Very similar to a GL translation). Earlier when we used glVertex3f, that was a vertex shader. It tells OpenGL which points in 3D space we want to shade inbetween.
   \end{block}
 
-  \begin{block}{Vertex Shaders}
-    \begin{itemize}
-    \item Uses lighting, normals, textures, etc.
-    \item Sets the color of individual pixels
-    \end{itemize}
+  \begin{block}{Fragment Shaders}
+    Tells OpenGL, how we want to shade pixels on our screen. OpenGL is a very low level API so we can shade on a per-pixel basis if we wish.
   \end{block}
 \end{frame}
 % -------------END SLIDE--------------------------
@@ -182,6 +178,21 @@
   \begin{block}{Fragment Shader}
     \includegraphics[scale=.4]{frag_shader.png}
   \end{block}
+\end{frame}
+% -------------END SLIDE--------------------------
+
+% -------------BEGIN SLIDE------------------------
+\begin{frame}
+
+  \frametitle{Compute Shaders}
+Most modern GPUs have many tiny cores optimized for smaller calculations. Since shaders reside entirely on the GPU, we can run a shader that performs only mathmatical calculations, \emph{using the GPU for tasks that are not graphical at all}. APIs like Nvidia's CUDA give the developer an interface to do this in.
+\begin{block}{What is a compute shader?}
+  \begin{itemize}
+\item Do not have to shade anything on the screen at all.
+\item The shader mostly performs various mathmatical calculations.
+\item It enables the developer to put the load on the GPU for performing tasks better optimized for a GPU, or anything they want to put in the shader
+  \end{itemize}
+\end{block}
 \end{frame}
 % -------------END SLIDE--------------------------
 
@@ -239,6 +250,10 @@
 % -------------BEGIN SLIDE------------------------
 \begin{frame}
   \frametitle{References}
+
+A complete class for shader programs can be found in the following link under the files shader.cpp and shader.h\\
+\url{https://github.com/BennyQBD/ModernOpenGLTutorial}\\
+
   \footnotesize{
     \begin{thebibliography}{99}
 
