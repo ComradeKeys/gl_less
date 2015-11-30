@@ -277,7 +277,7 @@ int main() {
   SDL_Init(SDL_INIT_VIDEO);
   SDL_Window *win = SDL_CreateWindow("Board the Platforms!", 100, 100, 640, 480, SDL_WINDOW_SHOWN);
   SDL_Renderer *ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
-  SDL_GLContext gl = SDL_GL_CreateContext(win);
+  SDL_GL_CreateContext(win); // No error checking for the moment
 
   // Load our spritesheet of textures
   spriteSheet = loadTexture("sprites.png");
@@ -299,7 +299,6 @@ int main() {
   }
  
   // Tidy up everything
-  SDL_GL_DeleteContext(gl);
   SDL_DestroyWindow(win);
 
   return 0;
